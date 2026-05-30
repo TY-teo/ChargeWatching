@@ -30,19 +30,17 @@ final class IORegistryReader {
         let adapterDesc = formatAdapter(adapterDetails)
 
         // PowerTelemetryData 字段以无符号 64-bit 编码（充/放电时数值会落在 2^64 附近），
-        // 必须按 int64 解码后取幅度——intValue(Int32) 会截断导致系统负载等出现负值。
+        // 必须按 int64 解码后取幅度——intValue(Int32) 会截断导致数值出现负值。
         let telemetry = dict["PowerTelemetryData"] as? [String: Any]
-        let systemLoadMilliwatts = readSignedInt(telemetry ?? [:], "SystemLoad").map { abs($0) }
-        let batteryPowerMilliwatts = readSignedInt(telemetry ?? [:], "BatteryPower").map { abs($0) }
         let systemPowerInMilliwatts = readSignedInt(telemetry ?? [:], "SystemPowerIn").map { abs($0) }
         let adapterEfficiencyLossMilliwatts = readSignedInt(telemetry ?? [:], "AdapterEfficiencyLoss").map { abs($0) }
 
-        // 电池功率幅度：优先瞬时遥测 BatteryPower（刚插电即实时反映），
-        // 回退 电压×瞬时电流，再回退 电压×平均电流（顶层 Amperage 是多秒平均，会滞后）。
+        // 充入电池的功率：电压 × 瞬时电流（InstantAmperage 插电即实时反映；
+        // 顶层 Amperage 是多秒平均、会滞后，作为回退）。
+        // 注意：不采用 PowerTelemetryData.BatteryPower——经库仑计实测，本机充电
+        // 实际约 56W，而该字段只给出约 8W，并不代表充入电池的功率。
         let batteryMagnitudeWatts: Double
-        if let bp = batteryPowerMilliwatts, bp > 0 {
-            batteryMagnitudeWatts = Double(bp) / 1000.0
-        } else if let v = voltage, let a = instantAmperage {
+        if let v = voltage, let a = instantAmperage, a != 0 {
             batteryMagnitudeWatts = abs(Double(v) * Double(a) / 1_000_000.0)
         } else if let v = voltage, let a = amperage {
             batteryMagnitudeWatts = abs(Double(v) * Double(a) / 1_000_000.0)
@@ -52,23 +50,26 @@ final class IORegistryReader {
         // 方向：充电为正（充入电池），否则为负（放电）。
         let batteryWatts = isCharging ? batteryMagnitudeWatts : -batteryMagnitudeWatts
 
-        let systemLoadWatts = systemLoadMilliwatts.map { Double($0) / 1000.0 }
-
-        // 墙插输出功率（从插座拉了多少瓦）
-        // 优先用 SMC 直接测量的 SystemPowerIn + AdapterEfficiencyLoss
-        // SystemPowerIn = 0 时（采样间隙）fallback 到能量守恒 (load + battery)
+        // 墙插输出功率（从插座/适配器拉了多少瓦）= 进入 Mac 的功率 + 适配器损耗。
+        // SystemPowerIn 与 system_profiler 适配器读数一致；采样间隙为 0 时记为 nil。
         let wallOutputWatts: Double?
-        if externalConnected {
-            if let sysIn = systemPowerInMilliwatts, sysIn > 0 {
-                let lossMw = adapterEfficiencyLossMilliwatts ?? 0
-                wallOutputWatts = Double(sysIn + lossMw) / 1000.0
-            } else if let load = systemLoadWatts {
-                wallOutputWatts = max(0, load + batteryWatts)
-            } else {
-                wallOutputWatts = nil
-            }
+        if externalConnected, let sysIn = systemPowerInMilliwatts, sysIn > 0 {
+            let lossMw = adapterEfficiencyLossMilliwatts ?? 0
+            wallOutputWatts = Double(sysIn + lossMw) / 1000.0
         } else {
             wallOutputWatts = nil
+        }
+
+        // 系统真实负载（芯片/屏幕等消耗）按能量守恒推导：
+        // 接电时 = 进入 Mac 的功率 − 充入电池的功率；放电时 = 电池放电功率。
+        // 不再直接读 PowerTelemetryData.SystemLoad（与 BatteryPower 同源，会虚高约 6 倍）。
+        let systemLoadWatts: Double?
+        if let sysIn = systemPowerInMilliwatts, sysIn > 0 {
+            systemLoadWatts = max(0, Double(sysIn) / 1000.0 - batteryWatts)
+        } else if !externalConnected {
+            systemLoadWatts = batteryMagnitudeWatts
+        } else {
+            systemLoadWatts = nil
         }
 
         return PowerSample(
