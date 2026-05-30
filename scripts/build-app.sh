@@ -26,6 +26,8 @@ cp "$BIN" "$MACOS/chargewatch"
 chmod +x "$MACOS/chargewatch"
 cp Resources/Info.plist "$CONTENTS/Info.plist"
 cp Resources/AppIcon.icns "$RESOURCES/AppIcon.icns"
+# 桥接快捷指令（onboarding 一键导入用）
+cp "Resources/ChargeWatch Set Battery Charge Limit.shortcut" "$RESOURCES/" 2>/dev/null || true
 
 # Copy SPM resource bundle if present
 BUNDLE_RES=".build/release/chargewatch_ChargeWatch.bundle"

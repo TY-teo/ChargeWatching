@@ -27,7 +27,26 @@ enum DumpCommand {
         print("amperageMA:          \(sample.amperageMilliamps.map(String.init) ?? "-")")
         print("SoC:                 \(sample.stateOfChargePercent.map { "\($0)%" } ?? "-")")
         print("adapter:             \(sample.adapterDescription ?? "-")")
+
+        let limit = blockingRead { await ChargeLimitReader().read() }
+        print("chargeLimit:         \(limit)")
         print("===============================")
         exit(0)
     }
+
+    /// 同步等待一次异步读取（仅供 --dump 诊断使用）。
+    private static func blockingRead<T>(_ work: @escaping () async -> T) -> T {
+        let semaphore = DispatchSemaphore(value: 0)
+        let box = ResultBox<T>()
+        Task {
+            box.value = await work()
+            semaphore.signal()
+        }
+        semaphore.wait()
+        return box.value!
+    }
+}
+
+private final class ResultBox<T> {
+    var value: T?
 }

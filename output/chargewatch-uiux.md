@@ -317,3 +317,91 @@ ChargeWatch
 - **状态图标**：移除状态横幅图标的 `状态色.opacity(0.16)` 圆角色块底衬（放电态被感知为电池周围「阴影」）。改为纯 SF Symbol（放电=单个电池符号）着状态色，无背景块。
 - **卡片亮度**：玻璃态卡片由 `.ultraThinMaterial` 调整为 `Color.white.opacity(0.5)` 叠 `.regularMaterial` + `black.opacity(0.06)` hairline，瓦片更亮更清晰。
 - **文案**：玻璃主题描述去掉「蓝色 tint」表述。
+
+## 13. 充电上限调节 UI（v0.4 新增）
+
+> 依据 PRD §9 与架构 §13。遵循 v0.3 设计系统：`cardSurface(theme:)` 卡片、`AppColor`/`AppFont`/`AppSpacing` 令牌、SF Symbols、无 emoji、`monospacedDigit()`。北极星是系统设置充电上限那一格（`reference/README.png`：80/85/90/95/100 离散档位）。
+>
+> **同步表述（与 PRD §9.2 一致）**：app→系统 实时；系统→app 仅在面板打开时回读刷新。卡片不暗示"任何时刻实时同步"。
+
+### 13.1 面板内位置与弹窗尺寸
+菜单面板新增"充电上限"卡片，置于 **sparkline 之后、`Divider()` + 操作行之前**：
+```
+banner → 2×2 指标 → 适配器行 → 最近60秒 → [充电上限卡片] → Divider → 操作行
+```
+卡片用 `cardSurface(theme:)`。**弹窗尺寸（评审 must-fix）**：现有 `StatusBarController` 把 `popover.contentSize` 硬编码为 360×380，新增卡片会被裁切。改为**内容自适应高度**（`NSHostingController` 让内容决定尺寸 / 取 fitting size），不再用魔法数；若保留固定高度，须按**最高态**预算（状态 B：标题 + caption + 两个按钮）。卡片自身高度随 A/B/C 变化，面板整体随之伸缩。
+
+### 13.2 卡片状态（A/B/C + 权限被拒）
+标题行统一布局：`[AppIcon.chargeLimit] 充电上限`（左）+ **固定宽度的尾部状态区**（右）。尾部区预留固定宽度，在 `当前值 ↔ ProgressView ↔ 警告图标` 之间切换时**不引起重排**。
+
+**状态 A — 支持且已配置（可在 app 内调节）**
+```
+┌────────────────────────────────────────────┐
+│ [icon] 充电上限                      80%   │ ← label(左) / 尾部区:当前值(textPrimary,等宽)
+│ ┌────┬────┬────┬────┬────┐                  │
+│ │ 80 │ 85 │ 90 │ 95 │100 │                  │ ← 5 档 segmented，选中=当前上限
+│ └────┴────┴────┴────┴────┘                  │
+└────────────────────────────────────────────┘
+```
+- 选档 → `ChargeLimitController.set(percent:)`；设置中段控 `disabled` + 尾部区显示 `ProgressView`（小号）；退避回读成功后刷新选中。
+- 失败：尾部区显示 `AppIcon.warning`（`exclamationmark.triangle`）+ 卡片底部 caption 错误说明 + 深链按钮。
+- 读到的当前值不在 5 档内：显示真实值，段控不精确选中（高亮最近档，避免误导）。
+
+**状态 B — 可读但未配置桥接指令**
+```
+│ [icon] 充电上限                      80%   │
+│ 在 ChargeWatch 内调节需一次性设置          │ ← panelCaption / textSecondary
+│ [一次性设置]            [在系统设置中调节] │ ← 主(开 onboarding) + 次(深链)
+```
+
+**状态 B′ — 已配置但"自动化"权限被拒（spike 揭示的真实子态）**
+```
+│ [icon] 充电上限                      80%   │
+│ 需授予"自动化"权限才能在 app 内调节        │
+│ [去授权]                [在系统设置中调节] │ ← "去授权"开系统设置>隐私与安全性>自动化引导
+```
+
+**状态 C — 不支持 app 内设置（旧系统 / Intel）**
+```
+│ [icon] 充电上限                      80%   │ ← 若 canRead；否则整卡隐藏
+│ [在系统设置中调节]                          │ ← 仅分级深链
+```
+- `.unsupported` 且 read 失败 → 整张卡片隐藏，避免空壳。
+
+### 13.3 当前值文案与配色
+- `.limited(80)`→"80%"；`.unlimited`→"未设上限"；`.unknown`→"—"。
+- 数字 `AppFont.panelSubheadline` + `monospacedDigit()`；label `AppFont.panelLabel`。
+- **颜色取自 token**：当前值用 `AppColor.textPrimary`（与 2×2 指标数值一致），**不写"accent"/不硬编码**（设计系统无 accent 文本 token）。段控选中色用控件自带 tint（系统 accent），属控件内建，符合 §0 颜色纪律。
+
+### 13.4 Onboarding 引导（ChargeLimitOnboardingView）
+- **呈现方式（评审 must-fix）**：app 是 `.accessory` 无主窗场景，且 popover 为 `.transient`（点外即关、无法承载 sheet）。故 onboarding 必须是 **AppDelegate 管理的独立 `NSWindow`**，完全照 `showSettings()` 模式（titled+closable、center、`isReleasedWhenClosed=false`、`ThemeWindowConfigurator.prepareForThemeable`、`windowBackground(theme:)`）；新增 `onOpenOnboarding` 闭包，与 `onOpenSettings` 同样从 AppDelegate 经 StatusBarController 串到 `ChargeLimitSection`。打开引导前先关 popover。
+- 标题：在 ChargeWatch 内调节充电上限。
+- 说明：macOS 无程序化创建快捷指令的 API，需一次性创建一个包裹系统「设置电池充电上限」动作的快捷指令（写入的就是系统那同一上限）。
+- 步骤（有序，纯文本 + 文字编号，**禁用 emoji**）：
+  1. 打开「快捷指令」App
+  2. 新建快捷指令，添加动作「设置电池充电上限 / Set Battery Charge Limit」
+  3. 关闭"仅今天"；按 spike 结论：单指令则让"上限"取自快捷指令输入，或每档建一个固定指令
+  4. 命名为 `ChargeLimitConstants.shortcutName`（文案直接展示该字面量，供用户精确复制）
+- 按钮：`打开快捷指令`、`我已完成（重新检测）`（重查 `isBridgeAvailable`）、`改用系统设置`（分级深链）。
+- 视觉：复用 SettingsWindow 的分组卡片风格（其 `section(title:)` 为私有，需抽取为共享 helper 或在本视图复述同一 cardSurface 分组模式）。
+
+### 13.5 图标与令牌
+- 卡片图标：在 `DesignTokens.swift` 的 `AppIcon` 枚举**集中新增 `AppIcon.chargeLimit`**（构建期验证有效的单一 SF Symbol，推荐 `minus.plus.batteryblock`；勿在视图内联 systemName）。**不得用 emoji**。
+- 段控 `.pickerStyle(.segmented)`（与设置页主题选择器一致）；5 档标签在 360 − `AppSpacing.l`×2 ≈ 328pt 内可容纳，"100" + 选中态最紧，标签用 `monospacedDigit()`。
+- 间距/圆角沿用 `AppSpacing`/`AppRadius`。
+
+### 13.6 交互与反馈
+- 设置中：段控禁用 + 尾部区 `ProgressView`；成功：退避回读刷新选中（无动画，防跳变）；慢-但-成功 不误报失败。
+- 失败分类反馈：权限被拒 → 状态 B′ 引导；退出码 0 但回读未变 → 判桥接配置错误，引导 onboarding；超时/其他 → caption 错误 + 深链。
+- 系统侧改动：面板打开时（`popoverWillShow`）立即回读 + 打开期间 ≤15s 轮询刷新选中；关闭即停（不后台 spawn）。
+
+### 13.7 本期裁剪
+- **去掉**"已达上限，暂停充电"副文案：依赖代码中尚不存在的 `NotChargingReason`（`PowerSample`/`IORegistryReader` 未读取），且语义未确认。横幅已表达 acPaused。列为后续可选。
+
+### 13.8 自检（沿用 §11 + 本节）
+- [ ] 段控/当前值无 emoji，图标来自 `AppIcon.chargeLimit`（SF Symbols）
+- [ ] 颜色全部 `AppColor.*`（当前值=textPrimary），卡片走 `cardSurface(theme:)`
+- [ ] A/B/B′/C + 加载/进度/错误 在玻璃/经典、深/浅模式下均验证
+- [ ] 尾部状态区固定宽度，值/进度/警告切换不重排
+- [ ] 新卡片不被弹窗裁切（弹窗尺寸内容自适应）
+- [ ] onboarding 为独立 NSWindow，开前先关 popover

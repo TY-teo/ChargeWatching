@@ -5,6 +5,7 @@ import Combine
 final class AppContainer {
     let sampleStream: SampleStream
     let repository: SampleRepositoryHolder
+    let chargeLimitController: ChargeLimitController
     private let downsampler: Downsampler?
     private let sampler: PowerSampler
     private var bag: Set<AnyCancellable> = []
@@ -13,6 +14,7 @@ final class AppContainer {
         let sampler = PowerSampler()
         self.sampler = sampler
         self.sampleStream = SampleStream(sampler: sampler)
+        self.chargeLimitController = ChargeLimitController()
 
         let dbURL = AppContainer.databaseURL()
         let db = try? Database(url: dbURL)

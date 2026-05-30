@@ -20,6 +20,7 @@ struct MenuBarPanel: View {
             metricsGrid
             adapterRow
             sparkline
+            ChargeLimitSection()
             Divider()
             actionRow
         }

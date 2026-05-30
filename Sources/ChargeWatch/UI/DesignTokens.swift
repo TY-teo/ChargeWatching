@@ -67,6 +67,7 @@ enum AppIcon {
     static let info = "info.circle"
     static let warning = "exclamationmark.triangle"
     static let calendar = "calendar"
+    static let chargeLimit = "minus.plus.batteryblock"
 
     static func batterySymbol(for soc: Int?) -> String {
         guard let soc else { return "battery.0" }

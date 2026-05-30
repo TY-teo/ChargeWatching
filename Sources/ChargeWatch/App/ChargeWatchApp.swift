@@ -24,6 +24,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private var statusBarController: StatusBarController?
     private var historyWindow: NSWindow?
     private var settingsWindow: NSWindow?
+    private var onboardingWindow: NSWindow?
 
     override init() {
         self.container = AppContainer()
@@ -33,8 +34,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     func applicationDidFinishLaunching(_ notification: Notification) {
         NSApp.setActivationPolicy(.accessory)
         container.start()
+        container.chargeLimitController.onOpenOnboarding = { [weak self] in self?.showChargeLimitOnboarding() }
         statusBarController = StatusBarController(
             stream: container.sampleStream,
+            chargeLimit: container.chargeLimitController,
             onOpenHistory: { [weak self] in self?.showHistory() },
             onOpenSettings: { [weak self] in self?.showSettings() },
             onExport: { [weak self] in self?.exportCSV() }
@@ -62,6 +65,24 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         }
         NSApp.activate(ignoringOtherApps: true)
         historyWindow?.makeKeyAndOrderFront(nil)
+    }
+
+    private func showChargeLimitOnboarding() {
+        if onboardingWindow == nil {
+            let root = ChargeLimitOnboardingView()
+                .environmentObject(container.chargeLimitController)
+            let hosting = NSHostingController(rootView: root)
+            let win = NSWindow(contentViewController: hosting)
+            win.title = "ChargeWatch · 充电上限设置"
+            win.styleMask = [.titled, .closable]
+            win.setContentSize(NSSize(width: 460, height: 380))
+            win.center()
+            win.isReleasedWhenClosed = false
+            ThemeWindowConfigurator.prepareForThemeable(win)
+            onboardingWindow = win
+        }
+        NSApp.activate(ignoringOtherApps: true)
+        onboardingWindow?.makeKeyAndOrderFront(nil)
     }
 
     private func showSettings() {
