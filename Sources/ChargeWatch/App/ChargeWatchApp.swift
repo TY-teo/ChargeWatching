@@ -9,6 +9,12 @@ struct ChargeWatchApp: App {
         if CommandLine.arguments.contains("--dump") {
             DumpCommand.runAndExit()
         }
+        if let i = CommandLine.arguments.firstIndex(of: "--shot") {
+            let out = CommandLine.arguments.count > i + 1
+                ? CommandLine.arguments[i + 1]
+                : FileManager.default.currentDirectoryPath
+            ShotCommand.runAndExit(outDir: out)
+        }
     }
 
     var body: some Scene {
