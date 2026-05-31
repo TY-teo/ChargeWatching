@@ -89,7 +89,11 @@ final class ChargeLimitController: ObservableObject {
         switch state {
         case .unsupported: return .hidden
         case .unknown: return .loading
-        case .unlimited, .limited:
+        case .unlimited:
+            // 实测：本机无法程序化"从关开启"上限（快捷指令只能改已开启的，SMC CHTE 惰性）。
+            // 因此关闭态一律引导去系统设置开启，而非显示"设置未生效"。
+            return capability.platformSupportsSet ? .enableInSystem : .deepLinkOnly
+        case .limited:
             if capability.canSetInApp { return .control }
             if capability.platformSupportsSet && capability.bridgeConfigured && lastError == .permissionDenied { return .permissionDenied }
             if capability.platformSupportsSet && !capability.bridgeConfigured { return .onboarding }

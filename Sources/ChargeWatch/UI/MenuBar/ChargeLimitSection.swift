@@ -54,7 +54,11 @@ struct ChargeLimitSection: View {
         case .control:
             stepperPicker
             if chargeLimit.lastError == .bridgeMisconfigured {
-                caption("设置未生效，请检查快捷指令配置", action: "重新配置") { chargeLimit.openOnboarding() }
+                caption("这一档没生效，可在系统设置中调节", action: "在系统设置中调节") { chargeLimit.openSystemBatterySettings() }
+            }
+        case .enableInSystem:
+            caption("充电上限未开启。本机只能在系统设置中开启，开启后即可在此快捷调节。") {
+                actionButton("在系统设置中开启", primary: true) { chargeLimit.openSystemBatterySettings() }
             }
         case .onboarding:
             caption("在 ChargeWatch 内调节需一次性设置") {

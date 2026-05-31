@@ -40,7 +40,8 @@ protocol ChargeLimitSetting {
 enum ChargeLimitUIMode {
     case hidden          // 不支持读取 → 整卡隐藏
     case loading         // 尚未读到
-    case control         // 可在 app 内调节（段控）
+    case control         // 上限已开启，可在 app 内调节（段控）
+    case enableInSystem  // 上限未开启：本机无法程序化开启，引导去系统设置开启
     case onboarding      // 平台支持但桥接未配置 → 引导
     case permissionDenied // 桥接已配但自动化授权被拒
     case deepLinkOnly    // 旧系统/Intel：只读 + 深链
