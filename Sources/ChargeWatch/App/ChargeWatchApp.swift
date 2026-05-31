@@ -47,6 +47,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     func applicationWillTerminate(_ notification: Notification) {
         container.stop()
+        // 退出即真正停止限充：写 enabled=false，root 守护进程下一轮（≤10s）恢复正常充电。
+        // 配置为同步写盘，进程退出前即落地。不强制卸载后台组件（避免每次退出弹管理员密码）。
+        if container.smcLimiter.installed {
+            container.smcLimiter.disable()
+        }
     }
 
     private func showHistory() {

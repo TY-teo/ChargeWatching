@@ -19,7 +19,10 @@ final class SMCChargeLimiter: ObservableObject {
     private let configDir = "/Users/Shared/ChargeWatch"
     private let configPath = "/Users/Shared/ChargeWatch/smc-limit.json"
     private let plistPath = "/Library/LaunchDaemons/com.chenran.chargewatch.helper.plist"
-    private let deadband = 3
+    /// 滞回缓冲带：对齐 Apple 官方“掉超过 5% 才回充”，避免上限点高频微充放。
+    private let deadband = 5
+    /// 自动满充校准周期（天）：到期放行充满到 100% 一次，维持电量计准确（对齐 Apple“偶尔充满”）。
+    private let calibrationDays = 7
 
     init() { reload() }
 
@@ -87,7 +90,7 @@ final class SMCChargeLimiter: ObservableObject {
 
     private func writeConfig() {
         try? FileManager.default.createDirectory(atPath: configDir, withIntermediateDirectories: true)
-        let obj: [String: Any] = ["enabled": enabled, "limit": limit, "deadband": deadband]
+        let obj: [String: Any] = ["enabled": enabled, "limit": limit, "deadband": deadband, "calibrationDays": calibrationDays]
         if let data = try? JSONSerialization.data(withJSONObject: obj) {
             try? data.write(to: URL(fileURLWithPath: configPath))
         }
