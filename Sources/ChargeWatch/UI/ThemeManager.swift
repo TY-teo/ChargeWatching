@@ -24,7 +24,9 @@ enum AppTheme: String, CaseIterable, Identifiable {
 
 extension View {
     /// 面板背景。
-    /// vibrancy：用系统原生 popover 材质（behindWindow），读起来与系统菜单栏弹层 / 控制中心一致；
+    /// vibrancy：不再叠加自定义材质——面板就放在 NSPopover 自带的系统 popover 材质之上，
+    /// 由系统提供唯一一层玻璃（与参考项目 MenuBarExtra(.window) 同一种系统材质，明亮且清晰）。
+    /// 此前在 popover 自带材质之上又叠了一层 .popover/.behindWindow，双层材质导致发暗、文字看不清。
     /// classic：不透明窗口底。两者都完全跟随系统深浅模式，不强制配色。
     @ViewBuilder
     func panelBackground(theme: AppTheme) -> some View {
@@ -32,7 +34,7 @@ extension View {
         case .classic:
             background(AppColor.bgPrimary)
         case .vibrancy:
-            background(VisualEffectView(material: .popover, blendingMode: .behindWindow))
+            self
         }
     }
 
@@ -64,10 +66,13 @@ extension View {
                 .overlay(shape.strokeBorder(Color(nsColor: .separatorColor), lineWidth: 1))
                 .shadow(color: .black.opacity(0.10), radius: 3, x: 0, y: 1)
         case .vibrancy:
+            // 玻璃主题：卡片底用 SwiftUI 层级填充 .quaternary——在真正的系统材质之上它会按
+            // vibrancy 渲染、深浅模式自动适配并抬升（此前发灰发暗是因为面板叠了双层材质、
+            // 不是真材质环境；现在面板只剩 NSPopover 单层系统玻璃，层级填充即可正确提亮）。
+            // 配 separator hairline 勾边；不叠第二层模糊材质（非 glass-on-glass）。
             self
-                .background(shape.fill(.secondary.opacity(0.18)))
-                .overlay(shape.strokeBorder(.white.opacity(0.10), lineWidth: 1))
-                .shadow(color: .black.opacity(0.10), radius: 2, x: 0, y: 1)
+                .background(shape.fill(.quaternary))
+                .overlay(shape.strokeBorder(Color(nsColor: .separatorColor), lineWidth: 1))
         }
     }
 
