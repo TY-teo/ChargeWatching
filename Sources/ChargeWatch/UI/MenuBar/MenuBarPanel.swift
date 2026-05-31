@@ -225,7 +225,8 @@ private struct SparkPoint: Identifiable {
     }
 }
 
-/// 指标卡片：标签在上、读数在下。cardSurface 与玻璃主题统一（不引入纯白卡底）。
+/// 指标卡片：标签在上、读数在下，经 cardSurface 抬升为浮于面板之上的实体卡片
+/// （classic 用系统设置内嵌卡底，vibrancy 用玻璃上的薄层叠加，均不引入纯白卡底）。
 /// 读数单行 + monospacedDigit，数字变化不改变高度，配合面板内容驱动高度时不引起抖动。
 /// 充入电池在充电态用语义绿高亮，其余跟随系统主文字色。
 private struct MetricCell: View {

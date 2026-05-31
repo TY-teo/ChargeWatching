@@ -59,6 +59,7 @@ struct SMCChargeLimitSection: View {
     }
 
     /// 头部百分比徽标：数字 monospacedDigit + 紧凑 % 后缀，层级清晰、宽度稳定。
+    /// % 后缀骑在数字基线上、保持 .secondary 安静后缀，玻璃材质上不冲淡、不喧宾夺主。
     private func percentBadge(_ value: Int, tint: Color) -> some View {
         HStack(alignment: .firstTextBaseline, spacing: 1) {
             Text("\(value)")
@@ -66,7 +67,7 @@ struct SMCChargeLimitSection: View {
                 .monospacedDigit()
                 .foregroundStyle(tint)
             Text("%")
-                .font(.caption)
+                .font(.footnote.weight(.medium))
                 .foregroundStyle(.secondary)
         }
     }
@@ -76,14 +77,19 @@ struct SMCChargeLimitSection: View {
             enablePrompt
         } else {
             Divider()
-            Toggle(isOn: Binding(
-                get: { limiter.enabled },
-                set: { $0 ? limiter.enable(limit: limiter.limit) : limiter.disable() }
-            )) {
+            // 说明在行首、开关贴行尾（系统设置开关行的标准布局），不居中。
+            HStack(alignment: .center, spacing: AppSpacing.s) {
                 rowLabel("启用充电上限", "将电量保持在设定上限附近")
+                Spacer(minLength: AppSpacing.s)
+                Toggle("启用充电上限", isOn: Binding(
+                    get: { limiter.enabled },
+                    set: { $0 ? limiter.enable(limit: limiter.limit) : limiter.disable() }
+                ))
+                .toggleStyle(.switch)
+                .labelsHidden()
+                .disabled(limiter.busy)
             }
-            .toggleStyle(.switch)
-            .disabled(limiter.busy)
+            .frame(maxWidth: .infinity)
 
             if limiter.enabled {
                 sliderControl
@@ -105,10 +111,14 @@ struct SMCChargeLimitSection: View {
                 .font(.caption)
                 .foregroundStyle(.secondary)
                 .fixedSize(horizontal: false, vertical: true)
-            Button("开启充电上限") { limiter.enable(limit: 80) }
-                .buttonStyle(.borderedProminent)
-                .controlSize(.large)
-                .disabled(limiter.busy)
+            // 说明文字保持前置占满整行；主操作按系统设置的 "primary right" 推到行尾。
+            HStack {
+                Spacer()
+                Button("开启充电上限") { limiter.enable(limit: 80) }
+                    .buttonStyle(.borderedProminent)
+                    .controlSize(.regular)
+                    .disabled(limiter.busy)
+            }
         }
     }
 
@@ -137,12 +147,12 @@ struct SMCChargeLimitSection: View {
                     .foregroundStyle(.secondary)
                 HStack(alignment: .firstTextBaseline, spacing: 2) {
                     Text("\(Int(draft.rounded()))")
-                        .font(.system(.title, design: .rounded).weight(.semibold))
+                        .font(.title2.weight(.semibold))
                         .monospacedDigit()
                         .foregroundStyle(AppColor.chargingActive)
                         .contentTransition(.numericText())
                     Text("%")
-                        .font(.title3.weight(.medium))
+                        .font(.callout)
                         .foregroundStyle(.secondary)
                 }
             }

@@ -47,17 +47,28 @@ extension View {
         }
     }
 
-    /// 主题感知卡片表面（兼容保留）。
-    /// 菜单栏面板已统一改用原生 `GroupBox` 分组；此修饰符仅供 Settings / History /
-    /// Onboarding 等既有调用点继续编译，且视觉与原生 GroupBox 的分组底对齐：
-    /// 系统语义级极淡填充 + hairline 勾边，深浅模式自动反相，不叠第二层材质
-    /// （避免 glass-on-glass），也不引入品牌色。两种主题渲染一致，外观完全跟随系统。
+    /// 主题感知卡片表面：实体抬升的卡片，而非凹陷的灰槽。
+    /// classic：用比窗口底高一级的 controlBackgroundColor 实体填充 + separator hairline +
+    /// 极淡投影，正是 macOS 系统设置内嵌卡片的配方，深浅模式自动反相，卡片浮于面板之上。
+    /// vibrancy：popover 材质之上不再叠第二层材质（避免 glass-on-glass），改用抬升的
+    /// 半透明 secondary 填充（前进色，非凹陷的 quaternary）+ 顶部白色微高光描边 + 极淡投影，
+    /// 读起来像贴合玻璃的薄层叠加，桌面透出时仍保持对比度。两种主题都跟随系统外观，不强制配色。
+    /// 此签名被 Settings / History / Onboarding 共享，必须保留。
     @ViewBuilder
     func cardSurface(theme: AppTheme, radius: CGFloat = AppRadius.m) -> some View {
         let shape = RoundedRectangle(cornerRadius: radius, style: .continuous)
-        self
-            .background(shape.fill(.quaternary.opacity(0.5)))
-            .overlay(shape.strokeBorder(.separator, lineWidth: 1))
+        switch theme {
+        case .classic:
+            self
+                .background(shape.fill(Color(nsColor: .controlBackgroundColor)))
+                .overlay(shape.strokeBorder(Color(nsColor: .separatorColor), lineWidth: 1))
+                .shadow(color: .black.opacity(0.10), radius: 3, x: 0, y: 1)
+        case .vibrancy:
+            self
+                .background(shape.fill(.secondary.opacity(0.18)))
+                .overlay(shape.strokeBorder(.white.opacity(0.10), lineWidth: 1))
+                .shadow(color: .black.opacity(0.10), radius: 2, x: 0, y: 1)
+        }
     }
 
     /// 兼容保留：历史上用于强制玻璃主题浅色配色，现已废弃为 no-op，
