@@ -8,16 +8,19 @@ final class StatusBarController: NSObject, NSPopoverDelegate {
     private let popover: NSPopover
     private let stream: SampleStream
     private let chargeLimit: ChargeLimitController
+    private let smcLimiter: SMCChargeLimiter
     private var bag: Set<AnyCancellable> = []
     private var eventMonitor: Any?
 
     init(stream: SampleStream,
          chargeLimit: ChargeLimitController,
+         smcLimiter: SMCChargeLimiter,
          onOpenHistory: @escaping () -> Void,
          onOpenSettings: @escaping () -> Void,
          onExport: @escaping () -> Void) {
         self.stream = stream
         self.chargeLimit = chargeLimit
+        self.smcLimiter = smcLimiter
         self.statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
         statusItem.isVisible = true
         self.popover = NSPopover()
@@ -34,6 +37,7 @@ final class StatusBarController: NSObject, NSPopoverDelegate {
         )
         .environmentObject(stream)
         .environmentObject(chargeLimit)
+        .environmentObject(smcLimiter)
         // 内容自适应高度：显式让 NSHostingController 依 SwiftUI 内容设 preferredContentSize，
         // 不再硬编码 contentSize，避免新增卡片把底部操作行裁切。
         let hosting = NSHostingController(rootView: panel)

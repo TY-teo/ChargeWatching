@@ -20,7 +20,7 @@ struct MenuBarPanel: View {
             metricsGrid
             adapterRow
             sparkline
-            ChargeLimitSection()
+            SMCChargeLimitSection()
             Divider()
             actionRow
         }

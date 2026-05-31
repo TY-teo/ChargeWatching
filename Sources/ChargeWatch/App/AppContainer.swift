@@ -6,6 +6,7 @@ final class AppContainer {
     let sampleStream: SampleStream
     let repository: SampleRepositoryHolder
     let chargeLimitController: ChargeLimitController
+    let smcLimiter: SMCChargeLimiter
     private let downsampler: Downsampler?
     private let sampler: PowerSampler
     private var bag: Set<AnyCancellable> = []
@@ -15,6 +16,7 @@ final class AppContainer {
         self.sampler = sampler
         self.sampleStream = SampleStream(sampler: sampler)
         self.chargeLimitController = ChargeLimitController()
+        self.smcLimiter = SMCChargeLimiter()
 
         let dbURL = AppContainer.databaseURL()
         let db = try? Database(url: dbURL)

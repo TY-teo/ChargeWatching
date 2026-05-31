@@ -38,6 +38,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         statusBarController = StatusBarController(
             stream: container.sampleStream,
             chargeLimit: container.chargeLimitController,
+            smcLimiter: container.smcLimiter,
             onOpenHistory: { [weak self] in self?.showHistory() },
             onOpenSettings: { [weak self] in self?.showSettings() },
             onExport: { [weak self] in self?.exportCSV() }

@@ -29,6 +29,13 @@ cp Resources/AppIcon.icns "$RESOURCES/AppIcon.icns"
 # 桥接快捷指令（onboarding 一键导入用）
 cp "Resources/ChargeWatch Set Battery Charge Limit.shortcut" "$RESOURCES/" 2>/dev/null || true
 
+# 充电上限 root helper + 安装脚本（app 内首次开启时经管理员授权安装）
+echo "==> swift build -c release --product chargewatch-helper"
+swift build -c release --product chargewatch-helper
+cp ".build/release/chargewatch-helper" "$RESOURCES/chargewatch-helper"
+chmod +x "$RESOURCES/chargewatch-helper"
+cp scripts/install-helper.sh "$RESOURCES/install-helper.sh"
+
 # Copy SPM resource bundle if present
 BUNDLE_RES=".build/release/chargewatch_ChargeWatch.bundle"
 if [ -d "$BUNDLE_RES" ]; then

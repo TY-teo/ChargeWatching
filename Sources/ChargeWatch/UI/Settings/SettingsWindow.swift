@@ -60,7 +60,7 @@ struct SettingsWindow: View {
                 }
 
                 HStack {
-                    Text("ChargeWatch v0.4.0")
+                    Text("ChargeWatch v0.5.0")
                         .font(AppFont.panelCaption)
                         .foregroundStyle(AppColor.textSecondary)
                     Spacer()

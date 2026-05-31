@@ -5,7 +5,8 @@ let package = Package(
     name: "chargewatch",
     platforms: [.macOS(.v13)],
     products: [
-        .executable(name: "chargewatch", targets: ["ChargeWatch"])
+        .executable(name: "chargewatch", targets: ["ChargeWatch"]),
+        .executable(name: "chargewatch-helper", targets: ["ChargeWatchHelper"])
     ],
     targets: [
         .executableTarget(
@@ -17,6 +18,13 @@ let package = Package(
                 .linkedFramework("SwiftUI"),
                 .linkedFramework("Combine"),
                 .linkedFramework("ServiceManagement")
+            ]
+        ),
+        .executableTarget(
+            name: "ChargeWatchHelper",
+            path: "Sources/ChargeWatchHelper",
+            linkerSettings: [
+                .linkedFramework("IOKit")
             ]
         )
     ]
