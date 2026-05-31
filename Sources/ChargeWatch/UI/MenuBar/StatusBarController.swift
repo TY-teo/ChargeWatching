@@ -38,12 +38,12 @@ final class StatusBarController: NSObject, NSPopoverDelegate {
         .environmentObject(stream)
         .environmentObject(chargeLimit)
         .environmentObject(smcLimiter)
-        // 固定 popover 尺寸（不跟随内容）：sparkline 每秒重绘时内容测量高度的亚像素变化
-        // 会让 preferredContentSize 抖动、外框上下跳。固定尺寸 + 面板内 Spacer 钉底操作行，
-        // 彻底消除外框抖动。高度按最高态（充电上限滑块展开）预算。
+        // popover 高度跟随面板内容（消除底部空白）。面板宽度固定、所有读数单行 +
+        // monospacedDigit、图表固定高度，保证 1Hz 采样刷新时每帧测量高度稳定，
+        // preferredContentSize 不抖动，外框不上下跳。
         let hosting = NSHostingController(rootView: panel)
+        hosting.sizingOptions = [.preferredContentSize]
         popover.contentViewController = hosting
-        popover.contentSize = NSSize(width: 360, height: 640)
 
         configureButton()
         observeStream()

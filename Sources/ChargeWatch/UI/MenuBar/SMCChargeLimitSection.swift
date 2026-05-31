@@ -48,18 +48,25 @@ struct SMCChargeLimitSection: View {
         if limiter.busy {
             ProgressView().controlSize(.small)
         } else if limiter.enabled {
-            Text("\(limiter.limit)%")
-                .font(.body.weight(.semibold))
-                .monospacedDigit()
-                .foregroundStyle(AppColor.chargingActive)
+            percentBadge(limiter.limit, tint: AppColor.chargingActive)
         } else if let soc {
-            Text("\(soc)%")
-                .font(.body.weight(.semibold))
-                .monospacedDigit()
-                .foregroundStyle(.primary)
+            percentBadge(soc, tint: .primary)
         } else {
             Text("—")
-                .font(.body.weight(.semibold))
+                .font(.callout.weight(.semibold))
+                .foregroundStyle(.secondary)
+        }
+    }
+
+    /// 头部百分比徽标：数字 monospacedDigit + 紧凑 % 后缀，层级清晰、宽度稳定。
+    private func percentBadge(_ value: Int, tint: Color) -> some View {
+        HStack(alignment: .firstTextBaseline, spacing: 1) {
+            Text("\(value)")
+                .font(.callout.weight(.semibold))
+                .monospacedDigit()
+                .foregroundStyle(tint)
+            Text("%")
+                .font(.caption)
                 .foregroundStyle(.secondary)
         }
     }
@@ -123,21 +130,38 @@ struct SMCChargeLimitSection: View {
     }
 
     private var readout: some View {
-        HStack(alignment: .firstTextBaseline, spacing: 2) {
-            Text("\(Int(draft.rounded()))")
-                .font(.title3.weight(.semibold))
-                .monospacedDigit()
-                .foregroundStyle(AppColor.chargingActive)
-                .contentTransition(.numericText())
-            Text("%")
-                .font(.body)
-                .foregroundStyle(.secondary)
-            Spacer()
-            if let soc {
-                Text("当前 \(soc)%")
+        HStack(alignment: .lastTextBaseline) {
+            VStack(alignment: .leading, spacing: 1) {
+                Text("目标上限")
                     .font(.caption)
-                    .monospacedDigit()
                     .foregroundStyle(.secondary)
+                HStack(alignment: .firstTextBaseline, spacing: 2) {
+                    Text("\(Int(draft.rounded()))")
+                        .font(.system(.title, design: .rounded).weight(.semibold))
+                        .monospacedDigit()
+                        .foregroundStyle(AppColor.chargingActive)
+                        .contentTransition(.numericText())
+                    Text("%")
+                        .font(.title3.weight(.medium))
+                        .foregroundStyle(.secondary)
+                }
+            }
+            Spacer(minLength: 0)
+            if let soc {
+                VStack(alignment: .trailing, spacing: 1) {
+                    Text("当前电量")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                    HStack(alignment: .firstTextBaseline, spacing: 1) {
+                        Text("\(soc)")
+                            .font(.title3.weight(.semibold))
+                            .monospacedDigit()
+                            .foregroundStyle(.primary)
+                        Text("%")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+                }
             }
         }
     }
