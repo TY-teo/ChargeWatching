@@ -13,6 +13,10 @@ enum AppColor {
     static let warningHigh = Color(nsColor: NSColor(name: nil) { appearance in
         appearance.isDarkMode ? NSColor(red: 0.973, green: 0.443, blue: 0.443, alpha: 1) : NSColor(red: 0.725, green: 0.110, blue: 0.110, alpha: 1)
     })
+    /// 图表描边专用蓝：高辨识度、深浅模式皆清晰，仅用于 sparkline 线条与填充。
+    static let chartLine = Color(nsColor: NSColor(name: nil) { appearance in
+        appearance.isDarkMode ? NSColor(red: 0.392, green: 0.624, blue: 1.0, alpha: 1) : NSColor(red: 0.0, green: 0.396, blue: 0.890, alpha: 1)
+    })
     static let bgPrimary = Color(nsColor: .windowBackgroundColor)
     static let bgSecondary = Color(nsColor: .controlBackgroundColor)
     static let bgTertiary = Color(nsColor: NSColor(name: nil) { appearance in
