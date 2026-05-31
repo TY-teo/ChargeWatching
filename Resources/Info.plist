@@ -2,33 +2,33 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-    <key>CFBundleName</key>
-    <string>ChargeWatch</string>
-    <key>CFBundleDisplayName</key>
-    <string>ChargeWatch</string>
-    <key>CFBundleIdentifier</key>
-    <string>com.chenran.chargewatch</string>
-    <key>CFBundleVersion</key>
-    <string>5</string>
-    <key>CFBundleShortVersionString</key>
-    <string>0.5.0</string>
-    <key>CFBundlePackageType</key>
-    <string>APPL</string>
-    <key>CFBundleExecutable</key>
-    <string>chargewatch</string>
-    <key>CFBundleIconFile</key>
-    <string>AppIcon</string>
-    <key>CFBundleIconName</key>
-    <string>AppIcon</string>
-    <key>LSMinimumSystemVersion</key>
-    <string>13.0</string>
-    <key>LSUIElement</key>
-    <true/>
-    <key>NSAppleEventsUsageDescription</key>
-    <string>ChargeWatch 通过你创建的快捷指令调节电池充电上限，需要运行快捷指令的权限。</string>
-    <key>NSHighResolutionCapable</key>
-    <true/>
-    <key>NSSupportsAutomaticGraphicsSwitching</key>
-    <true/>
+	<key>CFBundleDisplayName</key>
+	<string>ChargeWatch</string>
+	<key>CFBundleExecutable</key>
+	<string>chargewatch</string>
+	<key>CFBundleIconFile</key>
+	<string>AppIcon</string>
+	<key>CFBundleIconName</key>
+	<string>AppIcon</string>
+	<key>CFBundleIdentifier</key>
+	<string>com.chenran.chargewatch</string>
+	<key>CFBundleName</key>
+	<string>ChargeWatch</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleShortVersionString</key>
+	<string>0.6.0</string>
+	<key>CFBundleVersion</key>
+	<string>6</string>
+	<key>LSMinimumSystemVersion</key>
+	<string>13.0</string>
+	<key>LSUIElement</key>
+	<true/>
+	<key>NSAppleEventsUsageDescription</key>
+	<string>ChargeWatch 通过你创建的快捷指令调节电池充电上限，需要运行快捷指令的权限。</string>
+	<key>NSHighResolutionCapable</key>
+	<true/>
+	<key>NSSupportsAutomaticGraphicsSwitching</key>
+	<true/>
 </dict>
 </plist>
