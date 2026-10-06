@@ -15,9 +15,14 @@ struct MenuBarPanel: View {
 
     @EnvironmentObject private var stream: SampleStream
     @AppStorage("appTheme") private var themeRaw: String = AppTheme.classic.rawValue
+    @AppStorage(L10n.storageKey) private var languageRaw: String = AppLanguage.system.rawValue
 
     private var theme: AppTheme {
         AppTheme(rawValue: themeRaw) ?? .classic
+    }
+
+    private var L: L10n {
+        L10n(language: AppLanguage(rawValue: languageRaw) ?? .system)
     }
 
     var body: some View {
@@ -45,7 +50,7 @@ struct MenuBarPanel: View {
                 .frame(width: 30, alignment: .center)
                 .accessibilityHidden(true)
             VStack(alignment: .leading, spacing: 1) {
-                Text(stream.latest?.status.displayName ?? "采集中")
+                Text(stream.latest?.status.displayName ?? L.t("panel.sampling"))
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
                 Text(bannerHeadline)
@@ -79,11 +84,11 @@ struct MenuBarPanel: View {
         case .charging:
             return String(format: "%.1f W", s.batteryWatts)
         case .acPaused:
-            return s.stateOfChargePercent.map { "AC · \($0)%" } ?? "AC"
+            return s.stateOfChargePercent.map { L.t("panel.banner.ac_soc", $0) } ?? L.t("panel.banner.ac")
         case .discharging:
-            return s.stateOfChargePercent.map { "电池 · \($0)%" } ?? "放电中"
+            return s.stateOfChargePercent.map { L.t("panel.banner.battery_soc", $0) } ?? L.t("panel.banner.discharging")
         case .desktop:
-            return s.systemLoadWatts.map { String(format: "系统 %.1f W", $0) } ?? "市电"
+            return s.systemLoadWatts.map { L.t("panel.banner.system_watts", $0) } ?? L.t("panel.banner.mains")
         }
     }
 
@@ -92,13 +97,13 @@ struct MenuBarPanel: View {
     private var metricsGrid: some View {
         Grid(horizontalSpacing: AppSpacing.s, verticalSpacing: AppSpacing.s) {
             GridRow {
-                MetricCell(label: "充入电池",
+                MetricCell(label: L.t("metric.battery_in"),
                            value: stream.latest?.batteryWatts,
                            unit: "W",
                            formatter: wattText,
                            highlight: stream.latest?.status == .charging,
                            theme: theme)
-                MetricCell(label: "墙插输出",
+                MetricCell(label: L.t("metric.wall_output"),
                            value: stream.latest?.wallOutputWatts,
                            unit: "W",
                            formatter: wattText,
@@ -106,13 +111,13 @@ struct MenuBarPanel: View {
                            theme: theme)
             }
             GridRow {
-                MetricCell(label: "系统负载",
+                MetricCell(label: L.t("metric.system_load"),
                            value: stream.latest?.systemLoadWatts,
                            unit: "W",
                            formatter: wattText,
                            highlight: false,
                            theme: theme)
-                MetricCell(label: "电池电量",
+                MetricCell(label: L.t("metric.battery_level"),
                            value: stream.latest?.stateOfChargePercent.map(Double.init),
                            unit: "%",
                            formatter: percentText,
@@ -130,7 +135,7 @@ struct MenuBarPanel: View {
                 .font(.system(size: 12, weight: .medium))
                 .foregroundStyle(.secondary)
                 .accessibilityHidden(true)
-            Text(stream.latest?.adapterDescription ?? "未检测到适配器")
+            Text(stream.latest?.adapterDescription ?? L.t("panel.no_adapter"))
                 .font(.callout)
                 .foregroundStyle(.secondary)
                 .lineLimit(1)
@@ -152,7 +157,7 @@ struct MenuBarPanel: View {
         return GroupBox {
             VStack(alignment: .leading, spacing: AppSpacing.s) {
                 HStack(alignment: .firstTextBaseline) {
-                    Text("最近 60 秒")
+                    Text(L.t("panel.last_60s"))
                         .font(.subheadline)
                         .foregroundStyle(.secondary)
                     Spacer()
@@ -202,10 +207,10 @@ struct MenuBarPanel: View {
 
     private var actionRow: some View {
         HStack(spacing: 0) {
-            ActionButton(icon: AppIcon.history, label: "完整历史", action: onOpenHistory)
-            ActionButton(icon: AppIcon.export, label: "导出 CSV", action: onExport)
-            ActionButton(icon: AppIcon.settings, label: "设置", action: onOpenSettings)
-            ActionButton(icon: AppIcon.quit, label: "退出", action: onQuit)
+            ActionButton(icon: AppIcon.history, label: L.t("action.history"), action: onOpenHistory)
+            ActionButton(icon: AppIcon.export, label: L.t("action.export_csv"), action: onExport)
+            ActionButton(icon: AppIcon.settings, label: L.t("action.settings"), action: onOpenSettings)
+            ActionButton(icon: AppIcon.quit, label: L.t("action.quit"), action: onQuit)
         }
     }
 

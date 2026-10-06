@@ -4,7 +4,9 @@ import SwiftUI
 struct ChargeLimitSection: View {
     @EnvironmentObject private var chargeLimit: ChargeLimitController
     @AppStorage("appTheme") private var themeRaw: String = AppTheme.classic.rawValue
+    @AppStorage(L10n.storageKey) private var languageRaw: String = AppLanguage.system.rawValue
     private var theme: AppTheme { AppTheme(rawValue: themeRaw) ?? .classic }
+    private var L: L10n { L10n(language: AppLanguage(rawValue: languageRaw) ?? .system) }
 
     var body: some View {
         if chargeLimit.uiMode == .hidden {
@@ -26,7 +28,7 @@ struct ChargeLimitSection: View {
                 .font(.system(size: 13, weight: .medium))
                 .foregroundStyle(AppColor.textSecondary)
                 .accessibilityHidden(true)
-            Text("充电上限")
+            Text(L.t("limit.title"))
                 .font(AppFont.panelLabel)
                 .foregroundStyle(AppColor.textSecondary)
             Spacer()
@@ -54,25 +56,25 @@ struct ChargeLimitSection: View {
         case .control:
             stepperPicker
             if chargeLimit.lastError == .bridgeMisconfigured {
-                caption("这一档没生效，可在系统设置中调节", action: "在系统设置中调节") { chargeLimit.openSystemBatterySettings() }
+                caption(L.t("limit.step_not_applied"), action: L.t("limit.open_in_system")) { chargeLimit.openSystemBatterySettings() }
             }
         case .enableInSystem:
-            caption("充电上限未开启。本机只能在系统设置中开启，开启后即可在此快捷调节。") {
-                actionButton("在系统设置中开启", primary: true) { chargeLimit.openSystemBatterySettings() }
+            caption(L.t("limit.enable_in_system_caption")) {
+                actionButton(L.t("limit.enable_in_system_button"), primary: true) { chargeLimit.openSystemBatterySettings() }
             }
         case .onboarding:
-            caption("在 ChargeWatch 内调节需一次性设置") {
-                actionButton("一次性设置", primary: true) { chargeLimit.openOnboarding() }
-                actionButton("在系统设置中调节") { chargeLimit.openSystemBatterySettings() }
+            caption(L.t("limit.onboarding_caption")) {
+                actionButton(L.t("limit.onboarding_button"), primary: true) { chargeLimit.openOnboarding() }
+                actionButton(L.t("limit.open_in_system")) { chargeLimit.openSystemBatterySettings() }
             }
         case .permissionDenied:
-            caption("需授予\u{201C}自动化\u{201D}权限才能在 app 内调节") {
-                actionButton("去授权", primary: true) { chargeLimit.openSystemBatterySettings() }
-                actionButton("在系统设置中调节") { chargeLimit.openSystemBatterySettings() }
+            caption(L.t("limit.permission_caption")) {
+                actionButton(L.t("limit.permission_button"), primary: true) { chargeLimit.openSystemBatterySettings() }
+                actionButton(L.t("limit.open_in_system")) { chargeLimit.openSystemBatterySettings() }
             }
         case .deepLinkOnly:
             HStack {
-                actionButton("在系统设置中调节", primary: true) { chargeLimit.openSystemBatterySettings() }
+                actionButton(L.t("limit.open_in_system"), primary: true) { chargeLimit.openSystemBatterySettings() }
                 Spacer()
             }
         case .loading, .hidden:
@@ -81,7 +83,7 @@ struct ChargeLimitSection: View {
     }
 
     private var stepperPicker: some View {
-        Picker("充电上限", selection: Binding(
+        Picker(L.t("limit.title"), selection: Binding(
             get: { chargeLimit.selectedStep },
             set: { newValue in
                 if let value = newValue { Task { await chargeLimit.set(value) } }

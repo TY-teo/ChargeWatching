@@ -9,8 +9,10 @@
 [![Platform](https://img.shields.io/badge/平台-macOS%2013%2B-000000?style=flat-square&logo=apple&logoColor=white)](https://www.apple.com/macos/)
 [![Apple Silicon](https://img.shields.io/badge/充电上限-Apple%20Silicon-555555?style=flat-square&logo=apple&logoColor=white)](#系统要求)
 [![Swift](https://img.shields.io/badge/Swift-5.9-FA7343?style=flat-square&logo=swift&logoColor=white)](https://swift.org)
-[![Version](https://img.shields.io/badge/版本-v0.6.0-2563EB?style=flat-square)](https://github.com/TY-teo/ChargeWatching/releases)
+[![Version](https://img.shields.io/badge/版本-v0.7.0-2563EB?style=flat-square)](https://github.com/TY-teo/ChargeWatching/releases)
 [![License](https://img.shields.io/badge/许可证-MIT-3DA639?style=flat-square)](LICENSE)
+
+[English](README.en.md) · [Русский](README.ru.md) · **简体中文**
 
 <table>
   <tr>
@@ -68,6 +70,7 @@ ChargeWatch 是一款常驻 macOS 菜单栏的小工具，做两件事，并且�
 - **Fail-safe 兜底**：守护进程退出、被杀、读取异常时，一律自动恢复正常充电。
 - **纯本地、零联网**：所有数据留在本机 SQLite，不上传、不追踪。
 - **原生 SwiftUI 界面**：跟随系统浅色 / 深色外观，菜单栏轻量常驻。
+- **多语言界面**：简体中文、English、Русский，默认跟随 macOS 系统语言，也可在设置中指定。
 
 ---
 
@@ -101,7 +104,7 @@ ChargeWatch 是一款常驻 macOS 菜单栏的小工具，做两件事，并且�
 
 ### 1. 下载
 
-前往 [Releases](https://github.com/TY-teo/ChargeWatching/releases) 下载 `ChargeWatch-0.6.0.zip`，解压后把 `ChargeWatch.app` 拖入"应用程序"。
+前往 [Releases](https://github.com/TY-teo/ChargeWatching/releases) 下载 `ChargeWatch-0.7.0.dmg`，打开后把 `ChargeWatch.app` 拖入"应用程序"。
 
 ### 2. 首次打开（ad-hoc 签名）
 
@@ -298,6 +301,7 @@ sudo bash scripts/install-helper.sh uninstall
 - **功率采样**：IOKit 读取 `AppleSmartBattery` 与 `PowerTelemetryData`，约 1Hz 定时采样 + `IOPSNotification` 电源状态变化即时补采。
 - **充电控制**：以 root 运行的轻量守护进程直接读写 Apple Silicon SMC 寄存器，由 `launchd` 托管（`RunAtLoad` + `KeepAlive`）。
 - **数据存储**：本地 SQLite，滚动窗口保留近期样本并下采样长期存档。
+- **本地化**：SPM 资源包内的 `.lproj` 字符串表（简体中文 / English / Русский），默认跟随系统语言，可在设置中覆盖。
 
 ---
 
@@ -362,6 +366,10 @@ No. ChargeWatch is fully local with no network access and no tracking. All histo
 ### How is ChargeWatch different from the native macOS charge limit? / 和 macOS 自带的充电上限有什么区别？
 The native macOS 26.4 limit is 80% only and shows no power detail. ChargeWatch lets you pick any limit (including below 80%), adds a real-time wattage monitor, history, and CSV export.
 macOS 26.4 自带上限只有 80% 且无功率细节；ChargeWatch 可设任意上限（含 80% 以下），还提供实时瓦数、历史与 CSV 导出。
+
+### What language is the interface in? / 界面支持哪些语言？
+English, Russian and Chinese. By default ChargeWatch follows your macOS language setting; you can also pick a language explicitly in Settings → Language.
+简体中文、English、Русский。默认跟随 macOS 的系统语言，也可在「设置 → 语言」中显式指定。
 
 ---
 

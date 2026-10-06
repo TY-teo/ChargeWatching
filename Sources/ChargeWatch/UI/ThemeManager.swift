@@ -9,15 +9,15 @@ enum AppTheme: String, CaseIterable, Identifiable {
 
     var displayName: String {
         switch self {
-        case .classic: return "经典"
-        case .vibrancy: return "玻璃"
+        case .classic: return L10n.current.t("theme.classic")
+        case .vibrancy: return L10n.current.t("theme.vibrancy")
         }
     }
 
     var description: String {
         switch self {
-        case .classic: return "不透明面板，跟随系统深浅模式"
-        case .vibrancy: return "磨砂玻璃质感，桌面隐约可见"
+        case .classic: return L10n.current.t("theme.classic.desc")
+        case .vibrancy: return L10n.current.t("theme.vibrancy.desc")
         }
     }
 }

@@ -31,6 +31,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private var historyWindow: NSWindow?
     private var settingsWindow: NSWindow?
     private var onboardingWindow: NSWindow?
+    private var languageObserver: Any?
+    private var lastLanguageRaw: String = ""
 
     override init() {
         self.container = AppContainer()
@@ -49,6 +51,36 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             onOpenSettings: { [weak self] in self?.showSettings() },
             onExport: { [weak self] in self?.exportCSV() }
         )
+        observeLanguageChanges()
+    }
+
+    // MARK: 语言切换
+
+    /// SwiftUI 视图经 @AppStorage(L10n.storageKey) 自动重绘，但 NSWindow.title 不在视图树内，
+    /// 所以在这里盯住语言键的变化，手动回刷已创建窗口的标题。
+    private func observeLanguageChanges() {
+        lastLanguageRaw = currentLanguageRaw
+        languageObserver = NotificationCenter.default.addObserver(
+            forName: UserDefaults.didChangeNotification,
+            object: UserDefaults.standard,
+            queue: .main
+        ) { [weak self] _ in
+            Task { @MainActor in self?.refreshWindowTitlesIfLanguageChanged() }
+        }
+    }
+
+    private var currentLanguageRaw: String {
+        UserDefaults.standard.string(forKey: L10n.storageKey) ?? AppLanguage.system.rawValue
+    }
+
+    private func refreshWindowTitlesIfLanguageChanged() {
+        let raw = currentLanguageRaw
+        guard raw != lastLanguageRaw else { return }
+        lastLanguageRaw = raw
+        let L = L10n.current
+        historyWindow?.title = L.t("window.history")
+        onboardingWindow?.title = L.t("window.charge_limit")
+        settingsWindow?.title = L.t("window.settings")
     }
 
     func applicationWillTerminate(_ notification: Notification) {
@@ -67,7 +99,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                 .environmentObject(container.repository)
             let hosting = NSHostingController(rootView: root)
             let win = NSWindow(contentViewController: hosting)
-            win.title = "ChargeWatch · 历史"
+            win.title = L10n.current.t("window.history")
             win.styleMask = [.titled, .closable, .miniaturizable, .resizable]
             win.setContentSize(NSSize(width: 720, height: 480))
             win.center()
@@ -85,7 +117,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                 .environmentObject(container.chargeLimitController)
             let hosting = NSHostingController(rootView: root)
             let win = NSWindow(contentViewController: hosting)
-            win.title = "ChargeWatch · 充电上限设置"
+            win.title = L10n.current.t("window.charge_limit")
             win.styleMask = [.titled, .closable]
             win.setContentSize(NSSize(width: 460, height: 380))
             win.center()
@@ -102,7 +134,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             let root = SettingsWindow()
             let hosting = NSHostingController(rootView: root)
             let win = NSWindow(contentViewController: hosting)
-            win.title = "ChargeWatch · 设置"
+            win.title = L10n.current.t("window.settings")
             win.styleMask = [.titled, .closable]
             win.setContentSize(NSSize(width: 480, height: 360))
             win.center()

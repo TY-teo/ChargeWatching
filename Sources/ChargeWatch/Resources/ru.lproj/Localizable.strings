@@ -1,0 +1,118 @@
+/* Состояние заряда (PowerSample.ChargeStatus) */
+"status.charging" = "Зарядка";
+"status.ac_paused" = "Подключено к сети";
+"status.discharging" = "Работа от батареи";
+"status.desktop" = "Работа от сети";
+
+/* Панель в строке меню */
+"panel.sampling" = "Измерение…";
+"panel.banner.battery_soc" = "Батарея · %d%%";
+"panel.banner.ac_soc" = "Сеть · %d%%";
+"panel.banner.ac" = "Сеть";
+"panel.banner.discharging" = "Разряд";
+"panel.banner.system_watts" = "Система %.1f Вт";
+"panel.banner.mains" = "Сеть";
+"panel.no_adapter" = "Адаптер не обнаружен";
+"panel.last_60s" = "Последние 60 с";
+
+"metric.battery_in" = "В батарею";
+"metric.wall_output" = "Выход адаптера";
+"metric.system_load" = "Нагрузка системы";
+"metric.battery_level" = "Заряд батареи";
+
+"action.history" = "История";
+"action.export_csv" = "Экспорт CSV";
+"action.settings" = "Настройки";
+"action.quit" = "Выход";
+
+/* Блок «Лимит заряда» */
+"limit.title" = "Лимит заряда";
+"limit.overridden_suffix" = "% задано системой";
+"limit.a11y.overridden" = "Фактический лимит %d процентов, задан настройками системы";
+"limit.a11y.view_conflict" = "Подробнее о конфликте";
+"limit.conflict.title" = "Лимит заряда переопределён системой";
+"limit.conflict.frag1" = "Системный лимит ";
+"limit.conflict.frag2" = " ниже лимита ChargeWatch ";
+"limit.conflict.frag3" = ". Когда работают оба механизма, побеждает меньший, поэтому зарядка остановится на ";
+"limit.conflict.frag4" = ".";
+"limit.conflict.advice" = "Установите системный лимит на 100% (без ограничения) и доверьте управление ChargeWatch — здесь есть пять шагов (80/85/90/95/100), гистерезис и автоматическая калибровка.";
+"limit.conflict.guide_hint" = "После открытия найдите строку «Зарядка» и нажмите ⓘ справа, чтобы передвинуть лимит на 100%:";
+"limit.conflict.open_settings" = "Открыть «Настройки системы» → «Аккумулятор»";
+"limit.conflict.guide_a11y" = "Снимок страницы «Аккумулятор» в настройках системы; красный круг отмечает кнопку подробной информации в строке «Зарядка»";
+"limit.row.enable_title" = "Включить лимит заряда";
+"limit.row.enable_subtitle" = "Удерживает заряд около заданного лимита";
+"limit.prompt.install" = "Удерживает заряд около лимита. При первом включении нужно разрешить установку фонового компонента (один раз).";
+"limit.prompt.enable_button" = "Включить лимит заряда";
+"limit.readout.target" = "Целевой лимит";
+"limit.readout.current" = "Текущий заряд";
+"limit.a11y.percent_value" = "%d процентов";
+"limit.disabled_hint" = "Фоновый компонент установлен. Включите переключатель, чтобы задать лимит.";
+"limit.error.helper_missing" = "Не найден встроенный helper или скрипт установки";
+"limit.error.install_failed" = "Не удалось установить";
+
+/* Блок «Лимит заряда» — вариант через быструю команду */
+"limit.value.unlimited" = "Без лимита";
+"limit.open_in_system" = "Изменить в настройках системы";
+"limit.step_not_applied" = "Этот шаг не применился — измените лимит в настройках системы";
+"limit.enable_in_system_caption" = "Лимит заряда выключен. На этом Mac его можно включить только в настройках системы — после этого им можно управлять отсюда.";
+"limit.enable_in_system_button" = "Включить в настройках системы";
+"limit.onboarding_caption" = "Для управления из ChargeWatch нужна однократная настройка";
+"limit.onboarding_button" = "Настроить";
+"limit.permission_caption" = "Чтобы менять лимит в приложении, нужно разрешение «Автоматизация»";
+"limit.permission_button" = "Разрешить";
+
+/* Окно настроек */
+"settings.section.appearance" = "Внешний вид";
+"settings.section.general" = "Основные";
+"settings.section.data" = "Данные";
+"settings.section.language" = "Язык";
+"settings.language.hint" = "«Системный» использует язык, выбранный в macOS.";
+"settings.autolaunch" = "Запускать при входе в систему";
+"settings.notify_full" = "Уведомлять о полном заряде (100%)";
+"settings.notify_threshold" = "Уведомлять при достижении порога";
+"settings.reveal_in_finder" = "Показать в Finder";
+"language.system" = "Системный";
+
+/* Оформление */
+"theme.classic" = "Классическое";
+"theme.vibrancy" = "Стекло";
+"theme.classic.desc" = "Непрозрачная панель, следует оформлению системы";
+"theme.vibrancy.desc" = "Матовое стекло, рабочий стол слегка просвечивает";
+
+/* Окно истории */
+"history.range.today" = "Сегодня";
+"history.range.week" = "Неделя";
+"history.range.month" = "Месяц";
+"history.loading" = "Загрузка…";
+"history.empty" = "Нет данных";
+"history.stat.total" = "Всего заряжено";
+"history.stat.avg" = "Средняя мощность";
+"history.stat.peak" = "Пиковая мощность";
+"history.stat.duration" = "Время зарядки";
+"history.duration.hm" = "%d ч %d мин";
+"history.duration.m" = "%d мин";
+
+/* Заголовки окон */
+"window.history" = "ChargeWatch · История";
+"window.charge_limit" = "ChargeWatch · Настройка лимита заряда";
+"window.settings" = "ChargeWatch · Настройки";
+
+/* Настройка быстрой команды */
+"onboarding.title" = "Управление лимитом заряда из ChargeWatch";
+"onboarding.intro" = "В macOS нет программного способа создать быструю команду, поэтому один раз создайте команду, содержащую системное действие «Задать лимит заряда батареи». Она меняет тот же лимит, что и настройки системы.";
+"onboarding.import_button" = "Импортировать команду (рекомендуется)";
+"onboarding.import_hint" = "Нажмите кнопку выше, затем «Добавить быструю команду» в появившемся окне. Больше ничего собирать не нужно.";
+"onboarding.manual_header" = "Или создайте вручную:";
+"onboarding.step1" = "Откройте приложение «Быстрые команды» и создайте новую команду.";
+"onboarding.step2" = "Добавьте действие «Задать лимит заряда батареи» и отключите в нём «Только сегодня».";
+"onboarding.step3" = "Пусть параметр «Лимит» берёт значение из «Входных данных команды» (приём входных данных).";
+"onboarding.step4" = "Назовите команду точно так, как указано ниже.";
+"onboarding.status.ok" = "Команда найдена — лимит можно менять из панели";
+"onboarding.status.missing" = "Команда пока не найдена";
+"onboarding.open_shortcuts" = "Открыть «Быстрые команды»";
+"onboarding.recheck" = "Готово (проверить снова)";
+"onboarding.use_system" = "Использовать настройки системы";
+
+/* Ошибки быстрой команды */
+"shortcut.error.bad_url" = "Не удалось сформировать URL быстрой команды";
+"shortcut.error.run_failed" = "Не удалось запустить быструю команду. Убедитесь, что она создана: %@";

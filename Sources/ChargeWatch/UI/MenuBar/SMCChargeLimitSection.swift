@@ -10,6 +10,11 @@ struct SMCChargeLimitSection: View {
     @EnvironmentObject private var stream: SampleStream
     /// 用于检测"系统上限 < CW 上限"冲突（两者同时启用时系统侧较低值会赢）。
     @EnvironmentObject private var chargeLimit: ChargeLimitController
+    @AppStorage(L10n.storageKey) private var languageRaw: String = AppLanguage.system.rawValue
+
+    private var L: L10n {
+        L10n(language: AppLanguage(rawValue: languageRaw) ?? .system)
+    }
 
     private var soc: Int? { stream.latest?.stateOfChargePercent }
 
@@ -64,7 +69,7 @@ struct SMCChargeLimitSection: View {
 
     private var header: some View {
         HStack(spacing: AppSpacing.s) {
-            Label("充电上限", systemImage: AppIcon.chargeLimit)
+            Label(L.t("limit.title"), systemImage: AppIcon.chargeLimit)
                 .labelStyle(.titleAndIcon)
                 .foregroundStyle(.primary)
             Spacer()
@@ -97,14 +102,14 @@ struct SMCChargeLimitSection: View {
                     .font(.callout.weight(.semibold))
                     .monospacedDigit()
                     .foregroundStyle(AppColor.warningHigh)
-                Text("% 被系统设置覆盖")
+                Text(L.t("limit.overridden_suffix"))
                     .font(.footnote.weight(.medium))
                     .foregroundStyle(AppColor.warningHigh)
             }
             .lineLimit(1)
             .minimumScaleFactor(0.85)
             .accessibilityElement(children: .combine)
-            .accessibilityLabel("当前实际生效 \(sysSoc) 百分比，被系统设置覆盖")
+            .accessibilityLabel(L.t("limit.a11y.overridden", sysSoc))
 
             Button {
                 showConflictInfo.toggle()
@@ -115,7 +120,7 @@ struct SMCChargeLimitSection: View {
                     .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
-            .accessibilityLabel("查看冲突说明")
+            .accessibilityLabel(L.t("limit.a11y.view_conflict"))
             .popover(isPresented: $showConflictInfo, arrowEdge: .top) {
                 conflictPopoverContent(sysSoc: sysSoc)
             }
@@ -130,25 +135,25 @@ struct SMCChargeLimitSection: View {
             HStack(spacing: AppSpacing.xs) {
                 Image(systemName: AppIcon.warning)
                     .foregroundStyle(AppColor.warningHigh)
-                Text("充电上限被系统覆盖")
+                Text(L.t("limit.conflict.title"))
                     .font(.system(size: 14, weight: .semibold))
                     .foregroundStyle(.primary)
             }
 
             (
-                Text("系统设置上限 ")
+                Text(L.t("limit.conflict.frag1"))
                 + Text("\(sysSoc)%").font(.system(size: 12, weight: .semibold)).foregroundColor(AppColor.warningHigh)
-                + Text(" 比 ChargeWatch ")
+                + Text(L.t("limit.conflict.frag2"))
                 + Text("\(limiter.limit)%").font(.system(size: 12, weight: .semibold))
-                + Text(" 低。两个机制同时生效时较低的会赢，所以充电会停在 ")
+                + Text(L.t("limit.conflict.frag3"))
                 + Text("\(sysSoc)%").font(.system(size: 12, weight: .semibold)).foregroundColor(AppColor.warningHigh)
-                + Text("。")
+                + Text(L.t("limit.conflict.frag4"))
             )
             .font(.system(size: 12))
             .foregroundStyle(.secondary)
             .fixedSize(horizontal: false, vertical: true)
 
-            Text("建议把系统上限设到 100%（不限制），让 ChargeWatch 接管——5 档细粒度（80/85/90/95/100）、滞回缓冲、自动校准都在这里。")
+            Text(L.t("limit.conflict.advice"))
                 .font(.system(size: 12))
                 .foregroundStyle(.secondary)
                 .fixedSize(horizontal: false, vertical: true)
@@ -159,7 +164,7 @@ struct SMCChargeLimitSection: View {
                 chargeLimit.openSystemBatterySettings()
                 showConflictInfo = false
             } label: {
-                Text("打开系统设置 > 电池")
+                Text(L.t("limit.conflict.open_settings"))
                     .font(.system(size: 12, weight: .medium))
                     .frame(maxWidth: .infinity)
             }
@@ -176,7 +181,7 @@ struct SMCChargeLimitSection: View {
     @ViewBuilder
     private var batteryPageGuide: some View {
         VStack(alignment: .leading, spacing: AppSpacing.xs) {
-            Text("打开后请找到「充电」一行，点右侧 ⓘ 把上限拖到 100%：")
+            Text(L.t("limit.conflict.guide_hint"))
                 .font(.system(size: 11))
                 .foregroundStyle(.secondary)
                 .fixedSize(horizontal: false, vertical: true)
@@ -202,7 +207,7 @@ struct SMCChargeLimitSection: View {
                         .offset(x: 250, y: 69.5)
                 }
             }
-            .accessibilityLabel("系统设置 电池页截图，红圈标出「充电」行右侧的更多信息按钮位置")
+            .accessibilityLabel(L.t("limit.conflict.guide_a11y"))
         }
     }
 
@@ -227,9 +232,9 @@ struct SMCChargeLimitSection: View {
             Divider()
             // 说明在行首、开关贴行尾（系统设置开关行的标准布局），不居中。
             HStack(alignment: .center, spacing: AppSpacing.s) {
-                rowLabel("启用充电上限", "将电量保持在设定上限附近")
+                rowLabel(L.t("limit.row.enable_title"), L.t("limit.row.enable_subtitle"))
                 Spacer(minLength: AppSpacing.s)
-                Toggle("启用充电上限", isOn: Binding(
+                Toggle(L.t("limit.row.enable_title"), isOn: Binding(
                     get: { limiter.enabled },
                     set: { $0 ? limiter.enable(limit: limiter.limit) : limiter.disable() }
                 ))
@@ -255,14 +260,14 @@ struct SMCChargeLimitSection: View {
 
     private var enablePrompt: some View {
         VStack(alignment: .leading, spacing: AppSpacing.s) {
-            Text("开启后将电量保持在上限附近。首次需授权安装后台组件（仅一次）。")
+            Text(L.t("limit.prompt.install"))
                 .font(.caption)
                 .foregroundStyle(.secondary)
                 .fixedSize(horizontal: false, vertical: true)
             // 说明文字保持前置占满整行；主操作按系统设置的 "primary right" 推到行尾。
             HStack {
                 Spacer()
-                Button("开启充电上限") { limiter.enable(limit: 80) }
+                Button(L.t("limit.prompt.enable_button")) { limiter.enable(limit: 80) }
                     .buttonStyle(.borderedProminent)
                     .controlSize(.regular)
                     .disabled(limiter.busy)
@@ -282,7 +287,7 @@ struct SMCChargeLimitSection: View {
                 }
             )
             .disabled(limiter.busy)
-            .accessibilityValue("\(Int(draft.rounded())) 百分比")
+            .accessibilityValue(L.t("limit.a11y.percent_value", Int(draft.rounded())))
             tickRuler
         }
     }
@@ -290,7 +295,7 @@ struct SMCChargeLimitSection: View {
     private var readout: some View {
         HStack(alignment: .lastTextBaseline) {
             VStack(alignment: .leading, spacing: 1) {
-                Text("目标上限")
+                Text(L.t("limit.readout.target"))
                     .font(.caption)
                     .foregroundStyle(.secondary)
                 HStack(alignment: .firstTextBaseline, spacing: 2) {
@@ -307,7 +312,7 @@ struct SMCChargeLimitSection: View {
             Spacer(minLength: 0)
             if let soc {
                 VStack(alignment: .trailing, spacing: 1) {
-                    Text("当前电量")
+                    Text(L.t("limit.readout.current"))
                         .font(.caption)
                         .foregroundStyle(.secondary)
                     HStack(alignment: .firstTextBaseline, spacing: 1) {
@@ -341,7 +346,7 @@ struct SMCChargeLimitSection: View {
     }
 
     private var disabledHint: some View {
-        Text("已安装后台组件，打开开关即可设定上限。")
+        Text(L.t("limit.disabled_hint"))
             .font(.caption)
             .foregroundStyle(.secondary)
             .fixedSize(horizontal: false, vertical: true)

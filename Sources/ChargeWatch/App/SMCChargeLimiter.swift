@@ -67,12 +67,12 @@ final class SMCChargeLimiter: ObservableObject {
     func install(_ completion: @escaping (Bool) -> Void = { _ in }) {
         guard let script = bundledPath("install-helper", "sh"),
               let helper = bundledPath("chargewatch-helper", nil) else {
-            lastError = "未找到打包内的 helper / 安装脚本"; completion(false); return
+            lastError = L10n.current.t("limit.error.helper_missing"); completion(false); return
         }
         runAdmin("bash '\(script)' install '\(helper)'") { [weak self] ok, err in
             guard let self else { return }
             self.installed = FileManager.default.fileExists(atPath: self.plistPath)
-            if !ok && !self.installed { self.lastError = err ?? "安装失败" }
+            if !ok && !self.installed { self.lastError = err ?? L10n.current.t("limit.error.install_failed") }
             completion(self.installed)
         }
     }

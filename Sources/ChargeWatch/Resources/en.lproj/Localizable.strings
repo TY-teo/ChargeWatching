@@ -1,0 +1,118 @@
+/* Charge status (PowerSample.ChargeStatus) */
+"status.charging" = "Charging";
+"status.ac_paused" = "Plugged in";
+"status.discharging" = "On battery";
+"status.desktop" = "AC power";
+
+/* Menu bar panel */
+"panel.sampling" = "Sampling…";
+"panel.banner.battery_soc" = "Battery · %d%%";
+"panel.banner.ac_soc" = "AC · %d%%";
+"panel.banner.ac" = "AC";
+"panel.banner.discharging" = "Discharging";
+"panel.banner.system_watts" = "System %.1f W";
+"panel.banner.mains" = "AC power";
+"panel.no_adapter" = "No adapter detected";
+"panel.last_60s" = "Last 60 s";
+
+"metric.battery_in" = "Into battery";
+"metric.wall_output" = "Wall output";
+"metric.system_load" = "System load";
+"metric.battery_level" = "Battery level";
+
+"action.history" = "History";
+"action.export_csv" = "Export CSV";
+"action.settings" = "Settings";
+"action.quit" = "Quit";
+
+/* Charge limit section */
+"limit.title" = "Charge limit";
+"limit.overridden_suffix" = "% set by the system";
+"limit.a11y.overridden" = "Currently effective %d percent, overridden by System Settings";
+"limit.a11y.view_conflict" = "View conflict details";
+"limit.conflict.title" = "Charge limit overridden by the system";
+"limit.conflict.frag1" = "The System Settings limit ";
+"limit.conflict.frag2" = " is lower than ChargeWatch’s ";
+"limit.conflict.frag3" = ". When both are active the lower one wins, so charging will stop at ";
+"limit.conflict.frag4" = ".";
+"limit.conflict.advice" = "Set the system limit to 100% (no limit) and let ChargeWatch take over — the five steps (80/85/90/95/100), the hysteresis buffer and automatic calibration all live here.";
+"limit.conflict.guide_hint" = "Once it opens, find the “Charging” row and click the ⓘ on the right to drag the limit to 100%:";
+"limit.conflict.open_settings" = "Open System Settings > Battery";
+"limit.conflict.guide_a11y" = "Screenshot of the System Settings Battery page; the red circle marks the More Info button on the “Charging” row";
+"limit.row.enable_title" = "Enable charge limit";
+"limit.row.enable_subtitle" = "Keeps the charge near the limit you set";
+"limit.prompt.install" = "Keeps the charge near the limit. The first time you will authorize a background component (once only).";
+"limit.prompt.enable_button" = "Enable charge limit";
+"limit.readout.target" = "Target limit";
+"limit.readout.current" = "Current charge";
+"limit.a11y.percent_value" = "%d percent";
+"limit.disabled_hint" = "Background component installed. Flip the switch to set a limit.";
+"limit.error.helper_missing" = "Bundled helper / install script not found";
+"limit.error.install_failed" = "Installation failed";
+
+/* Charge limit section — Shortcuts bridge variant */
+"limit.value.unlimited" = "No limit";
+"limit.open_in_system" = "Adjust in System Settings";
+"limit.step_not_applied" = "This step did not take effect; adjust it in System Settings";
+"limit.enable_in_system_caption" = "The charge limit is off. On this Mac it can only be turned on in System Settings; after that you can adjust it from here.";
+"limit.enable_in_system_button" = "Turn on in System Settings";
+"limit.onboarding_caption" = "Adjusting it inside ChargeWatch needs a one-time setup";
+"limit.onboarding_button" = "One-time setup";
+"limit.permission_caption" = "“Automation” permission is required to adjust it in the app";
+"limit.permission_button" = "Grant access";
+
+/* Settings window */
+"settings.section.appearance" = "Appearance";
+"settings.section.general" = "General";
+"settings.section.data" = "Data";
+"settings.section.language" = "Language";
+"settings.language.hint" = "“System” follows your macOS language settings.";
+"settings.autolaunch" = "Launch at login";
+"settings.notify_full" = "Notify when charging completes (100%)";
+"settings.notify_threshold" = "Notify at charge threshold";
+"settings.reveal_in_finder" = "Show in Finder";
+"language.system" = "System";
+
+/* Themes */
+"theme.classic" = "Classic";
+"theme.vibrancy" = "Glass";
+"theme.classic.desc" = "Opaque panel, follows the system appearance";
+"theme.vibrancy.desc" = "Frosted glass, the desktop shows through faintly";
+
+/* History window */
+"history.range.today" = "Today";
+"history.range.week" = "This week";
+"history.range.month" = "This month";
+"history.loading" = "Loading…";
+"history.empty" = "No data";
+"history.stat.total" = "Total charged";
+"history.stat.avg" = "Average power";
+"history.stat.peak" = "Peak power";
+"history.stat.duration" = "Charging time";
+"history.duration.hm" = "%dh %dmin";
+"history.duration.m" = "%d min";
+
+/* Window titles */
+"window.history" = "ChargeWatch · History";
+"window.charge_limit" = "ChargeWatch · Charge limit setup";
+"window.settings" = "ChargeWatch · Settings";
+
+/* Shortcut onboarding */
+"onboarding.title" = "Adjust the charge limit inside ChargeWatch";
+"onboarding.intro" = "macOS has no API for creating shortcuts programmatically, so you need to create one shortcut that wraps the system “Set Battery Charge Limit” action. It writes the very same limit as System Settings.";
+"onboarding.import_button" = "Import the shortcut (recommended)";
+"onboarding.import_hint" = "Click the button above, then click “Add Shortcut” in the preview that appears. Nothing else to build.";
+"onboarding.manual_header" = "Or create it manually:";
+"onboarding.step1" = "Open the Shortcuts app and create a new shortcut.";
+"onboarding.step2" = "Add the “Set Battery Charge Limit” action and turn off “Only for Today” inside it.";
+"onboarding.step3" = "Make the action’s “Limit” take its value from “Shortcut Input” (accept input).";
+"onboarding.step4" = "Name the shortcut exactly as shown below.";
+"onboarding.status.ok" = "Shortcut detected — you can adjust the limit from the panel";
+"onboarding.status.missing" = "That shortcut has not been detected yet";
+"onboarding.open_shortcuts" = "Open Shortcuts";
+"onboarding.recheck" = "I’m done (check again)";
+"onboarding.use_system" = "Use System Settings instead";
+
+/* Shortcut bridge errors */
+"shortcut.error.bad_url" = "Could not build the shortcut URL";
+"shortcut.error.run_failed" = "Could not run the shortcut. Make sure it exists: %@";

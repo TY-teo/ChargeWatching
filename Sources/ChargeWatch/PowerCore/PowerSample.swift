@@ -38,10 +38,10 @@ enum ChargeStatus: Equatable {
 
     var displayName: String {
         switch self {
-        case .charging: return "充电中"
-        case .acPaused: return "已接电源"
-        case .discharging: return "电池放电"
-        case .desktop: return "市电运行"
+        case .charging: return L10n.current.t("status.charging")
+        case .acPaused: return L10n.current.t("status.ac_paused")
+        case .discharging: return L10n.current.t("status.discharging")
+        case .desktop: return L10n.current.t("status.desktop")
         }
     }
 }

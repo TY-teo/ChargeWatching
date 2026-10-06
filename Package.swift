@@ -3,6 +3,7 @@ import PackageDescription
 
 let package = Package(
     name: "chargewatch",
+    defaultLocalization: "en",
     platforms: [.macOS(.v13)],
     products: [
         .executable(name: "chargewatch", targets: ["ChargeWatch"]),
@@ -13,7 +14,9 @@ let package = Package(
             name: "ChargeWatch",
             path: "Sources/ChargeWatch",
             resources: [
-                .process("UI/Resources")
+                .process("UI/Resources"),
+                // en/ru/zh-Hans .lproj — 经 Bundle.module 解析（见 UI/Localization.swift）
+                .process("Resources")
             ],
             linkerSettings: [
                 .linkedFramework("IOKit"),

@@ -35,11 +35,11 @@ struct ShortcutBridge: ChargeLimitSetting {
             URLQueryItem(name: "text", value: String(percent)),
         ]
         guard let url = components.url else {
-            throw ChargeLimitError.failed("无法构造快捷指令 URL")
+            throw ChargeLimitError.failed(L10n.current.t("shortcut.error.bad_url"))
         }
         let opened = await MainActor.run { NSWorkspace.shared.open(url) }
         if !opened {
-            throw ChargeLimitError.failed("无法运行快捷指令，请确认已创建：\(shortcutName)")
+            throw ChargeLimitError.failed(L10n.current.t("shortcut.error.run_failed", shortcutName))
         }
     }
 }

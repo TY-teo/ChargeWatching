@@ -123,7 +123,7 @@ final class ChargeLimitController: ObservableObject {
     var currentValueText: String {
         switch state {
         case .limited(let n): return "\(n)%"
-        case .unlimited: return "未设上限"
+        case .unlimited: return L10n.current.t("limit.value.unlimited")
         case .unknown, .unsupported: return "—"
         }
     }

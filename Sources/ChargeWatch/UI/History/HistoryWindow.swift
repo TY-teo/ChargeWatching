@@ -5,6 +5,7 @@ import AppKit
 struct HistoryWindow: View {
     @EnvironmentObject private var repoHolder: SampleRepositoryHolder
     @AppStorage("appTheme") private var themeRaw: String = AppTheme.classic.rawValue
+    @AppStorage(L10n.storageKey) private var languageRaw: String = AppLanguage.system.rawValue
     @State private var range: TimeRange = .today
     @State private var points: [TimeSeriesPoint] = []
     @State private var stats: AggregateStats = .zero
@@ -12,6 +13,10 @@ struct HistoryWindow: View {
 
     private var theme: AppTheme {
         AppTheme(rawValue: themeRaw) ?? .classic
+    }
+
+    private var L: L10n {
+        L10n(language: AppLanguage(rawValue: languageRaw) ?? .system)
     }
 
     var body: some View {
@@ -40,7 +45,7 @@ struct HistoryWindow: View {
             Button {
                 exportCSV()
             } label: {
-                Label("导出 CSV", systemImage: AppIcon.export)
+                Label(L.t("action.export_csv"), systemImage: AppIcon.export)
             }
         }
         .padding(AppSpacing.m)
@@ -53,7 +58,7 @@ struct HistoryWindow: View {
                     Image(systemName: AppIcon.history)
                         .font(.system(size: 28, weight: .light))
                         .foregroundStyle(AppColor.textSecondary)
-                    Text(isLoading ? "加载中…" : "暂无数据")
+                    Text(isLoading ? L.t("history.loading") : L.t("history.empty"))
                         .font(AppFont.panelBody)
                         .foregroundStyle(AppColor.textSecondary)
                 }
@@ -101,10 +106,10 @@ struct HistoryWindow: View {
 
     private var statsBar: some View {
         HStack(spacing: AppSpacing.l) {
-            statBox(title: "累计充入", value: String(format: "%.2f Wh", stats.totalChargedEnergyWh))
-            statBox(title: "平均功率", value: String(format: "%.1f W", stats.averageChargingWatts))
-            statBox(title: "峰值功率", value: String(format: "%.1f W", stats.peakChargingWatts))
-            statBox(title: "充电时长", value: formatDuration(stats.chargingDurationSeconds))
+            statBox(title: L.t("history.stat.total"), value: String(format: "%.2f Wh", stats.totalChargedEnergyWh))
+            statBox(title: L.t("history.stat.avg"), value: String(format: "%.1f W", stats.averageChargingWatts))
+            statBox(title: L.t("history.stat.peak"), value: String(format: "%.1f W", stats.peakChargingWatts))
+            statBox(title: L.t("history.stat.duration"), value: formatDuration(stats.chargingDurationSeconds))
         }
         .frame(maxWidth: .infinity)
         .padding(AppSpacing.m)
@@ -145,8 +150,8 @@ struct HistoryWindow: View {
     private func formatDuration(_ seconds: Int) -> String {
         let h = seconds / 3600
         let m = (seconds % 3600) / 60
-        if h > 0 { return "\(h)h \(m)min" }
-        return "\(m) min"
+        if h > 0 { return L.t("history.duration.hm", h, m) }
+        return L.t("history.duration.m", m)
     }
 
     private func exportCSV() {
@@ -175,9 +180,9 @@ enum TimeRange: CaseIterable, Hashable {
 
     var title: String {
         switch self {
-        case .today: return "今天"
-        case .week: return "本周"
-        case .month: return "本月"
+        case .today: return L10n.current.t("history.range.today")
+        case .week: return L10n.current.t("history.range.week")
+        case .month: return L10n.current.t("history.range.month")
         }
     }
 

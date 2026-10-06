@@ -5,37 +5,36 @@ import AppKit
 struct ChargeLimitOnboardingView: View {
     @EnvironmentObject private var chargeLimit: ChargeLimitController
     @AppStorage("appTheme") private var themeRaw: String = AppTheme.classic.rawValue
+    @AppStorage(L10n.storageKey) private var languageRaw: String = AppLanguage.system.rawValue
     private var theme: AppTheme { AppTheme(rawValue: themeRaw) ?? .classic }
+    private var L: L10n { L10n(language: AppLanguage(rawValue: languageRaw) ?? .system) }
 
-    private let steps = [
-        "打开\u{201C}快捷指令\u{201D} App，新建一个快捷指令。",
-        "添加动作\u{201C}设置电池充电上限 / Set Battery Charge Limit\u{201D}，关闭其中的\u{201C}仅今天\u{201D}。",
-        "让该动作的\u{201C}上限\u{201D}取自\u{201C}快捷指令输入\u{201D}（接收输入）。",
-        "把快捷指令命名为下面的名称（需完全一致）。"
-    ]
+    private var steps: [String] {
+        (1...4).map { L.t("onboarding.step\($0)") }
+    }
 
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: AppSpacing.l) {
                 VStack(alignment: .leading, spacing: AppSpacing.xs) {
-                    Text("在 ChargeWatch 内调节充电上限")
+                    Text(L.t("onboarding.title"))
                         .font(AppFont.panelSubheadline)
                         .foregroundStyle(AppColor.textPrimary)
-                    Text("macOS 没有程序化创建快捷指令的接口，需要你一次性创建一个包裹系统\u{201C}设置电池充电上限\u{201D}动作的快捷指令。它写入的就是系统设置里那同一个上限。")
+                    Text(L.t("onboarding.intro"))
                         .font(AppFont.panelCaption)
                         .foregroundStyle(AppColor.textSecondary)
                         .fixedSize(horizontal: false, vertical: true)
                 }
 
                 VStack(alignment: .leading, spacing: AppSpacing.s) {
-                    Button("一键导入快捷指令（推荐）") { importBundledShortcut() }
+                    Button(L.t("onboarding.import_button")) { importBundledShortcut() }
                         .buttonStyle(.borderedProminent)
-                    Text("点上方按钮 → 在弹出的预览里点\u{201C}添加快捷指令\u{201D}，即可完成。无需手动搭建。")
+                    Text(L.t("onboarding.import_hint"))
                         .font(AppFont.panelCaption)
                         .foregroundStyle(AppColor.textSecondary)
                 }
 
-                Text("或手动创建：")
+                Text(L.t("onboarding.manual_header"))
                     .font(AppFont.panelLabel)
                     .foregroundStyle(AppColor.textSecondary)
 
@@ -68,10 +67,10 @@ struct ChargeLimitOnboardingView: View {
                 }
 
                 HStack(spacing: AppSpacing.s) {
-                    Button("打开\u{201C}快捷指令\u{201D}") { openShortcutsApp() }
-                    Button("我已完成（重新检测）") { Task { await chargeLimit.refresh() } }
+                    Button(L.t("onboarding.open_shortcuts")) { openShortcutsApp() }
+                    Button(L.t("onboarding.recheck")) { Task { await chargeLimit.refresh() } }
                     Spacer()
-                    Button("改用系统设置") { chargeLimit.openSystemBatterySettings() }
+                    Button(L.t("onboarding.use_system")) { chargeLimit.openSystemBatterySettings() }
                 }
             }
             .padding(AppSpacing.xl)
@@ -83,11 +82,11 @@ struct ChargeLimitOnboardingView: View {
 
     @ViewBuilder private var statusLabel: some View {
         if chargeLimit.capability.bridgeConfigured {
-            Label("已检测到快捷指令，可在面板中调节", systemImage: "checkmark.circle.fill")
+            Label(L.t("onboarding.status.ok"), systemImage: "checkmark.circle.fill")
                 .font(AppFont.panelCaption)
                 .foregroundStyle(AppColor.chargingActive)
         } else {
-            Label("尚未检测到该快捷指令", systemImage: AppIcon.info)
+            Label(L.t("onboarding.status.missing"), systemImage: AppIcon.info)
                 .font(AppFont.panelCaption)
                 .foregroundStyle(AppColor.textSecondary)
         }

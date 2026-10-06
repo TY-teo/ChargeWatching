@@ -36,6 +36,13 @@ cp ".build/release/chargewatch-helper" "$RESOURCES/chargewatch-helper"
 chmod +x "$RESOURCES/chargewatch-helper"
 cp scripts/install-helper.sh "$RESOURCES/install-helper.sh"
 
+# Info.plist 本地化（NSAppleEventsUsageDescription 的 en/ru/zh-Hans 版本）
+for LPROJ in Resources/InfoPlist/*.lproj; do
+  [ -d "$LPROJ" ] || continue
+  mkdir -p "$RESOURCES/$(basename "$LPROJ")"
+  cp "$LPROJ/InfoPlist.strings" "$RESOURCES/$(basename "$LPROJ")/"
+done
+
 # Copy SPM resource bundle if present
 BUNDLE_RES=".build/release/chargewatch_ChargeWatch.bundle"
 if [ -d "$BUNDLE_RES" ]; then

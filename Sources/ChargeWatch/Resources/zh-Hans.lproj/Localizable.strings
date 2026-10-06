@@ -1,0 +1,118 @@
+/* 充电状态（PowerSample.ChargeStatus） */
+"status.charging" = "充电中";
+"status.ac_paused" = "已接电源";
+"status.discharging" = "电池放电";
+"status.desktop" = "市电运行";
+
+/* 菜单栏面板 */
+"panel.sampling" = "采集中";
+"panel.banner.battery_soc" = "电池 · %d%%";
+"panel.banner.ac_soc" = "AC · %d%%";
+"panel.banner.ac" = "AC";
+"panel.banner.discharging" = "放电中";
+"panel.banner.system_watts" = "系统 %.1f W";
+"panel.banner.mains" = "市电";
+"panel.no_adapter" = "未检测到适配器";
+"panel.last_60s" = "最近 60 秒";
+
+"metric.battery_in" = "充入电池";
+"metric.wall_output" = "墙插输出";
+"metric.system_load" = "系统负载";
+"metric.battery_level" = "电池电量";
+
+"action.history" = "完整历史";
+"action.export_csv" = "导出 CSV";
+"action.settings" = "设置";
+"action.quit" = "退出";
+
+/* 充电上限分组 */
+"limit.title" = "充电上限";
+"limit.overridden_suffix" = "% 被系统设置覆盖";
+"limit.a11y.overridden" = "当前实际生效 %d 百分比，被系统设置覆盖";
+"limit.a11y.view_conflict" = "查看冲突说明";
+"limit.conflict.title" = "充电上限被系统覆盖";
+"limit.conflict.frag1" = "系统设置上限 ";
+"limit.conflict.frag2" = " 比 ChargeWatch ";
+"limit.conflict.frag3" = " 低。两个机制同时生效时较低的会赢，所以充电会停在 ";
+"limit.conflict.frag4" = "。";
+"limit.conflict.advice" = "建议把系统上限设到 100%（不限制），让 ChargeWatch 接管——5 档细粒度（80/85/90/95/100）、滞回缓冲、自动校准都在这里。";
+"limit.conflict.guide_hint" = "打开后请找到「充电」一行，点右侧 ⓘ 把上限拖到 100%：";
+"limit.conflict.open_settings" = "打开系统设置 > 电池";
+"limit.conflict.guide_a11y" = "系统设置 电池页截图，红圈标出「充电」行右侧的更多信息按钮位置";
+"limit.row.enable_title" = "启用充电上限";
+"limit.row.enable_subtitle" = "将电量保持在设定上限附近";
+"limit.prompt.install" = "开启后将电量保持在上限附近。首次需授权安装后台组件（仅一次）。";
+"limit.prompt.enable_button" = "开启充电上限";
+"limit.readout.target" = "目标上限";
+"limit.readout.current" = "当前电量";
+"limit.a11y.percent_value" = "%d 百分比";
+"limit.disabled_hint" = "已安装后台组件，打开开关即可设定上限。";
+"limit.error.helper_missing" = "未找到打包内的 helper / 安装脚本";
+"limit.error.install_failed" = "安装失败";
+
+/* 充电上限分组——快捷指令桥接版 */
+"limit.value.unlimited" = "未设上限";
+"limit.open_in_system" = "在系统设置中调节";
+"limit.step_not_applied" = "这一档没生效，可在系统设置中调节";
+"limit.enable_in_system_caption" = "充电上限未开启。本机只能在系统设置中开启，开启后即可在此快捷调节。";
+"limit.enable_in_system_button" = "在系统设置中开启";
+"limit.onboarding_caption" = "在 ChargeWatch 内调节需一次性设置";
+"limit.onboarding_button" = "一次性设置";
+"limit.permission_caption" = "需授予“自动化”权限才能在 app 内调节";
+"limit.permission_button" = "去授权";
+
+/* 设置窗口 */
+"settings.section.appearance" = "外观";
+"settings.section.general" = "通用";
+"settings.section.data" = "数据";
+"settings.section.language" = "语言";
+"settings.language.hint" = "「跟随系统」使用 macOS 的语言设置。";
+"settings.autolaunch" = "开机自动启动";
+"settings.notify_full" = "充电完成时通知（100%）";
+"settings.notify_threshold" = "充电达到阈值时通知";
+"settings.reveal_in_finder" = "在 Finder 中显示";
+"language.system" = "跟随系统";
+
+/* 外观主题 */
+"theme.classic" = "经典";
+"theme.vibrancy" = "玻璃";
+"theme.classic.desc" = "不透明面板，跟随系统深浅模式";
+"theme.vibrancy.desc" = "磨砂玻璃质感，桌面隐约可见";
+
+/* 历史窗口 */
+"history.range.today" = "今天";
+"history.range.week" = "本周";
+"history.range.month" = "本月";
+"history.loading" = "加载中…";
+"history.empty" = "暂无数据";
+"history.stat.total" = "累计充入";
+"history.stat.avg" = "平均功率";
+"history.stat.peak" = "峰值功率";
+"history.stat.duration" = "充电时长";
+"history.duration.hm" = "%d 小时 %d 分";
+"history.duration.m" = "%d 分";
+
+/* 窗口标题 */
+"window.history" = "ChargeWatch · 历史";
+"window.charge_limit" = "ChargeWatch · 充电上限设置";
+"window.settings" = "ChargeWatch · 设置";
+
+/* 快捷指令引导 */
+"onboarding.title" = "在 ChargeWatch 内调节充电上限";
+"onboarding.intro" = "macOS 没有程序化创建快捷指令的接口，需要你一次性创建一个包裹系统“设置电池充电上限”动作的快捷指令。它写入的就是系统设置里那同一个上限。";
+"onboarding.import_button" = "一键导入快捷指令（推荐）";
+"onboarding.import_hint" = "点上方按钮 → 在弹出的预览里点“添加快捷指令”，即可完成。无需手动搭建。";
+"onboarding.manual_header" = "或手动创建：";
+"onboarding.step1" = "打开“快捷指令”App，新建一个快捷指令。";
+"onboarding.step2" = "添加动作“设置电池充电上限 / Set Battery Charge Limit”，关闭其中的“仅今天”。";
+"onboarding.step3" = "让该动作的“上限”取自“快捷指令输入”（接收输入）。";
+"onboarding.step4" = "把快捷指令命名为下面的名称（需完全一致）。";
+"onboarding.status.ok" = "已检测到快捷指令，可在面板中调节";
+"onboarding.status.missing" = "尚未检测到该快捷指令";
+"onboarding.open_shortcuts" = "打开“快捷指令”";
+"onboarding.recheck" = "我已完成（重新检测）";
+"onboarding.use_system" = "改用系统设置";
+
+/* 快捷指令桥接错误 */
+"shortcut.error.bad_url" = "无法构造快捷指令 URL";
+"shortcut.error.run_failed" = "无法运行快捷指令，请确认已创建：%@";
